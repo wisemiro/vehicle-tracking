@@ -1,0 +1,1000 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Vehicle Tracker API provides necessary methods and means to\ntrack ground and water vehicles positions.",
+    "title": "Vehicle Tracker API",
+    "termsOfService": "https://api.vehicles.neu.edu.tr/"
+  },
+  "basePath": "/",
+  "paths": {
+    "/agent/": {
+      "get": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Filter vehicles.",
+        "operationId": "FilterAgents",
+        "parameters": [
+          {
+            "enum": [
+              "ASSIGNED",
+              "UNASSIGNED"
+            ],
+            "type": "string",
+            "x-go-name": "AgentState",
+            "description": "AgentState\n\nAgentState to be filtered.\n\"ASSIGNED\" or \"UNASSIGNED\"",
+            "name": "state",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AgentSuccessAgentsResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      }
+    },
+    "/agent/{uuid}/sync": {
+      "post": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Send GPS data from agent.",
+        "operationId": "SyncAgent",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "UUID",
+            "description": "UUID is an unique identifier across agents",
+            "name": "uuid",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Data represents the x,y location of the agent at ts time.",
+            "name": "Data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GPSData"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AgentEmptyResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      }
+    },
+    "/auth/": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "See if you are authenticated or not.",
+        "operationId": "CheckAuth",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AuthSuccessOKResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Get an `authorization_token`.",
+        "operationId": "Authorize",
+        "parameters": [
+          {
+            "description": "Data represents user's credentials",
+            "name": "Data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AuthorizationRequestPayload"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AuthSuccessTokenResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      }
+    },
+    "/user/": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get all Users.",
+        "operationId": "GetAllUsers",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UserSuccessUsersResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create a new user.",
+        "operationId": "CreateNewUser",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "description": "Ident represents the idetity definition of the User",
+            "name": "Data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "email": {
+                  "description": "Email",
+                  "type": "string",
+                  "x-go-name": "Email"
+                },
+                "password": {
+                  "description": "Password",
+                  "type": "string",
+                  "x-go-name": "Password"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UserSuccessUserResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      }
+    },
+    "/user/{uuid}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get a User by UUID.",
+        "operationId": "GetUser",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "UUID",
+            "description": "UUID",
+            "name": "uuid",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UserSuccessUserResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete a user.",
+        "operationId": "DeleteUser",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "UUID",
+            "description": "UUID",
+            "name": "uuid",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UserSuccessUserResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      }
+    },
+    "/vehicle/": {
+      "get": {
+        "tags": [
+          "Vehicles"
+        ],
+        "summary": "Get all vehicles in the database.",
+        "operationId": "GetAllVehicles",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/VehicleSuccessVehiclesResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Vehicles"
+        ],
+        "summary": "Create a new vehicle record.",
+        "operationId": "CreateNewVehicle",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "description": "Ident represents the identity definition of the  Vehicle",
+            "name": "Ident",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "plate_id",
+                "type"
+              ],
+              "properties": {
+                "agent_uuid": {
+                  "description": "AgentID",
+                  "type": "string",
+                  "x-go-name": "AgentUUID"
+                },
+                "groups": {
+                  "description": "Groups",
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "x-go-name": "Groups"
+                },
+                "plate_id": {
+                  "description": "PlateID",
+                  "type": "string",
+                  "x-go-name": "PlateID"
+                },
+                "type": {
+                  "description": "Type",
+                  "type": "string",
+                  "x-go-name": "Type"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/VehicleSuccessVehicleResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      }
+    },
+    "/vehicle/filter": {
+      "get": {
+        "tags": [
+          "Vehicles"
+        ],
+        "summary": "Filter vehicles in the database.",
+        "operationId": "FilterVehicles",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "VehicleType",
+            "description": "VehicleType\n\nVehicleType to be filtered.\ne.g: \"SCHOOL-BUS\"",
+            "name": "vehicle_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "VehicleGroupID",
+            "description": "VehicleGroup\n\nVehicleGroup id to be filtered.\ne.g: 3",
+            "name": "vehicle_group_id",
+            "in": "query"
+          },
+          {
+            "enum": [
+              "ASSIGNED",
+              "UNASSIGNED"
+            ],
+            "type": "string",
+            "x-go-name": "AgentState",
+            "description": "AgentState\n\nAgentState to be filtered.\n\"ASSIGNED\" or \"UNASSIGNED\"",
+            "name": "agent_state",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/VehicleSuccessVehiclesResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      }
+    },
+    "/vehicle/group/": {
+      "get": {
+        "tags": [
+          "Vehicles"
+        ],
+        "summary": "Get all vehicle groups in the database.",
+        "operationId": "GetAllGroups",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/VehicleSuccessVehicleGroupsResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Vehicles"
+        ],
+        "summary": "Create a new vehicle group.",
+        "operationId": "CreateNewGroup",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "description": "Group",
+            "name": "Group",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "description": "Name",
+                  "type": "string",
+                  "x-go-name": "Name"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/VehicleSuccessVehicleGroupResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      }
+    },
+    "/vehicle/group/{group_id}": {
+      "delete": {
+        "tags": [
+          "Vehicles"
+        ],
+        "summary": "Delete a group definition.",
+        "operationId": "DeleteVehicleGroup",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "ID",
+            "description": "GroupID",
+            "name": "group_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/VehicleSuccessVehicleGroupResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      }
+    },
+    "/vehicle/type/": {
+      "get": {
+        "tags": [
+          "Vehicles"
+        ],
+        "summary": "Get possible vehicle types defined in the system.",
+        "operationId": "GetAllTypes",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/VehicleSuccessVehicleTypesResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      }
+    },
+    "/vehicle/{plate_id}": {
+      "get": {
+        "tags": [
+          "Vehicles"
+        ],
+        "summary": "Get a vehicle from database.",
+        "operationId": "GetVehicle",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "PlateID",
+            "description": "PlateID is a unique identifier across the vehicles",
+            "name": "plate_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/VehicleSuccessVehicleResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Vehicles"
+        ],
+        "summary": "Delete a vehicle.",
+        "operationId": "DeleteVehicle",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "PlateID",
+            "description": "PlateID is an unique identifier across vehicles",
+            "name": "plate_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/VehicleSuccessVehicleResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      }
+    },
+    "/vehicle/{plate_id}/agent": {
+      "post": {
+        "tags": [
+          "Vehicles"
+        ],
+        "summary": "Set vehicle agent.",
+        "operationId": "VehicleSetAgent",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "PlateID",
+            "description": "PlateID is a unique identifier across the vehicles",
+            "name": "plate_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Agent represents an agent",
+            "name": "Agent",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "uuid"
+              ],
+              "properties": {
+                "uuid": {
+                  "description": "UUID",
+                  "type": "string",
+                  "x-go-name": "UUID"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/VehicleSuccessVehicleResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Vehicles"
+        ],
+        "summary": "Unset vehicle agent.",
+        "operationId": "VehicleUnsetAgent",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "PlateID",
+            "description": "PlateID is a unique identifier across the vehicles",
+            "name": "plate_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/VehicleSuccessVehicleResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      }
+    },
+    "/vehicle/{plate_id}/groups": {
+      "put": {
+        "tags": [
+          "Vehicles"
+        ],
+        "summary": "Set vehicle's groups.",
+        "operationId": "SetVehicleGroups",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "PlateID",
+            "description": "PlateID",
+            "name": "plate_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Groups",
+            "name": "Ident",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "groups": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "x-go-name": "Groups"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/VehicleSuccessVehicleGroupsResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ErrorMsg"
+          }
+        }
+      }
+    },
+    "/ws/vehicle/filter": {
+      "get": {
+        "description": "e.g. wss://api.vehicles.neu.edu.tr/ws/vehicle/filter?vehicle_type=SCHOOL-BUS\u0026vehicle_group_id=2",
+        "tags": [
+          "WebSocket"
+        ],
+        "summary": "WebSocket Endpoint for filter vehicles.",
+        "operationId": "FilterVehiclesWS",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "VehicleType",
+            "description": "VehicleType\n\nVehicleType to be filtered.\ne.g: \"SCHOOL-BUS\"",
+            "name": "vehicle_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "VehicleGroupID",
+            "description": "VehicleGroup\n\nVehicleGroup id to be filtered.\ne.g: 3",
+            "name": "vehicle_group_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/VehicleSuccessVehicleResponse"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Agent": {
+      "type": "object",
+      "properties": {
+        "gps_ts": {
+          "type": "string",
+          "x-go-name": "TS"
+        },
+        "label": {
+          "type": "string",
+          "x-go-name": "Label"
+        },
+        "lat": {
+          "type": "string",
+          "x-go-name": "Lat"
+        },
+        "lon": {
+          "type": "string",
+          "x-go-name": "Lon"
+        },
+        "updated_at": {
+          "x-go-name": "UpdatedAt"
+        },
+        "uuid": {
+          "type": "string",
+          "x-go-name": "UUID"
+        }
+      },
+      "x-go-package": "github.com/cad/vehicle-tracker-api/repository"
+    },
+    "AuthorizationCheckResponsePayload": {
+      "type": "object",
+      "properties": {
+        "authorized": {
+          "type": "boolean",
+          "x-go-name": "Authorized"
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        }
+      },
+      "x-go-package": "github.com/cad/vehicle-tracker-api/endpoints"
+    },
+    "AuthorizationRequestPayload": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "x-go-name": "Email"
+        },
+        "password": {
+          "type": "string",
+          "x-go-name": "Password"
+        }
+      },
+      "x-go-package": "github.com/cad/vehicle-tracker-api/endpoints"
+    },
+    "AuthorizationResponsePayload": {
+      "type": "object",
+      "properties": {
+        "authorization_token": {
+          "type": "string",
+          "x-go-name": "AuthorizationToken"
+        }
+      },
+      "x-go-package": "github.com/cad/vehicle-tracker-api/endpoints"
+    },
+    "GPSData": {
+      "type": "object",
+      "properties": {
+        "lat": {
+          "type": "string",
+          "x-go-name": "Lat"
+        },
+        "lon": {
+          "type": "string",
+          "x-go-name": "Lon"
+        },
+        "ts": {
+          "type": "string",
+          "x-go-name": "TS"
+        }
+      },
+      "x-go-package": "github.com/cad/vehicle-tracker-api/endpoints"
+    },
+    "GenericError": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
+          "description": "Error Message",
+          "type": "string",
+          "x-go-name": "Message"
+        }
+      },
+      "x-go-package": "github.com/cad/vehicle-tracker-api/endpoints"
+    },
+    "Group": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "ID"
+        },
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "github.com/cad/vehicle-tracker-api/repository"
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "x-go-name": "Email"
+        },
+        "updated_at": {
+          "x-go-name": "UpdatedAt"
+        },
+        "uuid": {
+          "type": "string",
+          "x-go-name": "UUID"
+        }
+      },
+      "x-go-package": "github.com/cad/vehicle-tracker-api/repository"
+    },
+    "Vehicle": {
+      "type": "object",
+      "properties": {
+        "agent": {
+          "$ref": "#/definitions/Agent"
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Group"
+          },
+          "x-go-name": "Groups"
+        },
+        "plate_id": {
+          "type": "string",
+          "x-go-name": "PlateID"
+        },
+        "type": {
+          "type": "string",
+          "x-go-name": "Type"
+        },
+        "updated_at": {
+          "x-go-name": "UpdatedAt"
+        }
+      },
+      "x-go-package": "github.com/cad/vehicle-tracker-api/repository"
+    }
+  },
+  "responses": {
+    "AgentSuccessAgentResponse": {
+      "description": "Returns an agent",
+      "schema": {
+        "$ref": "#/definitions/Agent"
+      }
+    },
+    "AgentSuccessAgentsResponse": {
+      "description": "Returns list of agents",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Agent"
+        }
+      }
+    },
+    "AgentSuccessEmptyResponse": {
+      "description": "Returns empty object"
+    },
+    "AuthSuccessOKResponse": {
+      "description": "Returns ok if authenticated",
+      "schema": {
+        "$ref": "#/definitions/AuthorizationCheckResponsePayload"
+      }
+    },
+    "AuthSuccessTokenResponse": {
+      "description": "Returns a `authorization_token`",
+      "schema": {
+        "$ref": "#/definitions/AuthorizationResponsePayload"
+      }
+    },
+    "ErrorMsg": {
+      "description": "Generic Error",
+      "schema": {
+        "$ref": "#/definitions/GenericError"
+      }
+    },
+    "UserSuccessUserResponse": {
+      "description": "Returns a user",
+      "schema": {
+        "$ref": "#/definitions/User"
+      }
+    },
+    "UserSuccessUsersResponse": {
+      "description": "Returns list of users",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/User"
+        }
+      }
+    },
+    "VehicleGroupsResponse": {
+      "description": "VehicleGroupResponse",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "group": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Group"
+            },
+            "x-go-name": "Groups"
+          }
+        }
+      }
+    },
+    "VehicleResponse": {
+      "description": "VehicleResponse",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "vehicle": {
+            "$ref": "#/definitions/Vehicle"
+          }
+        }
+      }
+    },
+    "VehicleSuccessVehicleGroupResponse": {
+      "description": "Returns a vehicle group",
+      "schema": {
+        "$ref": "#/definitions/Group"
+      }
+    },
+    "VehicleSuccessVehicleGroupsResponse": {
+      "description": "Returns list of vehicle groups",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Group"
+        }
+      }
+    },
+    "VehicleSuccessVehicleResponse": {
+      "description": "Returns a vehicle",
+      "schema": {
+        "$ref": "#/definitions/Vehicle"
+      }
+    },
+    "VehicleSuccessVehicleTypesResponse": {
+      "description": "Returns list of vehicle types",
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "VehicleSuccessVehiclesResponse": {
+      "description": "Returns list of vehicles",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Vehicle"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

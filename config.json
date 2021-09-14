@@ -1,0 +1,9 @@
+{
+    "db": {
+        "type": "sqlite3",
+        "url": "data/devel.db"
+    },
+    "server": {
+        "port": ":5004"
+     }
+}
